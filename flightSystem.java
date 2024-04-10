@@ -41,19 +41,24 @@ public class flightSystem
         flightsBy.search(root);
         flightsBy.setSearchStrategy(new searchByDate());
         flightsBy.search(root);
-        //add notifications to Workers and Customers based on their sources and their favorite destinations and print them:
+
+        //create the users and register them to the notification system.
         Customer user1 = new Customer("John", "Madrid", new String[]{"Berlin", "Roma", "Tokyo"});
         Customer user2 = new Customer("Mary", "London", new String[]{"Lisbon", "Paris"});
-        Worker user3 = new Worker("David", AirAlbania, "Lisbon", new String[]{"Tokyo", "Paris"});
+        Worker user3 = new Worker("David", AirAlbania, "Istanbul", new String[]{"Tokyo", "Roma"});
         root.registerTravelers(user1);
         root.registerTravelers(user2);
         root.registerTravelers(user3);
+
+        //add notifications to Workers and Customers based on their country and their favorite destinations:
         root.notifyObservers("The notification system will not work on 16/8 from 16:00-18:00");
         swiss.flightSetPrice(flight1,500);
-        swiss.remove(flight2);
-        swiss.flightSetDepartureTime(flight1,"17:25");
-        SunExpress.flightSetDate(flight4,"19/8");
-        AirAlbania.setFlightPriceForWorkers(flight4, 600);
+        lufthansa.remove(flight2);
+        AirAlbania.flightSetDepartureTime(flight3,"17:25");
+        SunExpress.flightSetDate(flight1,"19/8");
+        AirAlbania.setFlightPriceForWorkers(flight3, 600);
+
+        //print the notifications of these users:
         user1.printNotifications();
         user2.printNotifications();
         user3.printNotifications();

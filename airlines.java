@@ -125,7 +125,7 @@ class airline extends Subject implements airlines
                      {
                          if (worker.getCountry().equals(flight.getFrom()) && flightInDestinations(flight.getDestination(), worker.getFavoriteDestinations()))
                          {
-                             String notification = "Flight: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " is sale for workers! the price for you is: " + newPrice + "$";
+                             String notification = "Flight: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " is on sale for workers! the price for you is: " + newPrice + "$";
                              worker.notify(notification);
                          }
                      }
