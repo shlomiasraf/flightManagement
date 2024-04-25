@@ -1,5 +1,7 @@
 package flightManagement;
 
+import java.util.ArrayList;
+
 public class FlightManagementSystemFacade extends Subject
 {
     private static FlightManagementSystemFacade instance;
@@ -16,31 +18,19 @@ public class FlightManagementSystemFacade extends Subject
     }
     public void AddSubsidiaryToAirline(Airline airline, Airline subsidiary)
     {
-        if(!airline.getSubsidiaries().contains(subsidiary))
-        {
-            airline.add(subsidiary);
-        }
+        airline.add(subsidiary);
     }
     public void AddFlightToAirline(Airline airline, Flight flight)
     {
-        if(!airline.getSubsidiaries().contains(flight))
-        {
-            airline.add(flight);
-        }
+        airline.add(flight);
     }
     public void signIn(Traveler traveler)
     {
-        if(!observers.contains(traveler) && observers.size() < 100)
-        {
-            addObserver(traveler);
-        }
+        addObserver(traveler);
     }
     public void signOut(Traveler traveler)
     {
-        if(!observers.isEmpty() && observers.contains(traveler))
-        {
-            removeObserver(traveler);
-        }
+        removeObserver(traveler);
     }
     public Flight getFlight(String name, String from, String destination, String date, String departureTime, String arrivalTime, double price)
     {
@@ -80,125 +70,57 @@ public class FlightManagementSystemFacade extends Subject
     }
     public void printNotifications(Traveler traveler)
     {
-        System.out.println("\n" + traveler.getName() + " notifications:");
-        for(String notification : traveler.notifications)
-        {
-            System.out.println(notification);
-        }
+        traveler.printNotifications();
     }
     public void removeFlight(Airline airline,Flight flight)
     {
-        if(airline.getSubsidiaries().contains(flight))
+        if(airline.remove(flight))
         {
-            airline.remove(flight);
-            for (Observer observer : observers)
-            {
-                if(observer instanceof Traveler)
-                {
-                    Traveler traveler = (Traveler) observer;
-                    if (traveler.getCountry().equals(flight.getFrom()) && flightInDestinations(flight.getDestination(), traveler.getFavoriteDestinations()))
-                    {
-                        String notification = "Flight: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " is cancelled";
-                        traveler.notify(notification);
-                    }
-                }
-            }
+            ArrayList<Observer> RelevantObservers = flight.flightRelevantObservers(observers);
+            String notification = "Flight: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " is cancelled";
+            notifyRelevantObservers(RelevantObservers,notification);
         }
     }
     public void removeSubsidiary(Airline airline,Airline subsidiary)
     {
-        if(airline.getSubsidiaries().contains(subsidiary))
+        if(airline.remove(subsidiary))
         {
-            airline.remove(subsidiary);
-            for (Observer observer : observers)
-            {
-                if(observer instanceof Traveler)
-                {
-                    Traveler traveler = (Traveler) observer;
-                    String notification = "Airline: " + subsidiary.getName() + " stop working with: " + airline.getName() + " for now";
-                    traveler.notify(notification);
-                }
-            }
+            String notification = "Airline: " + subsidiary.getName() + " stop working with: " + airline.getName() + " for now";
+            notifyObservers(notification);
         }
     }
     public void flightSetPrice(Flight flight, double newPrice)
     {
         if(newPrice < flight.getPrice())
         {
-            for (Observer observer : observers)
-            {
-                if (observer instanceof Traveler)
-                {
-                    Traveler traveler = (Traveler) observer;
-                    if (traveler.getCountry().equals(flight.getFrom()) && flightInDestinations(flight.getDestination(), traveler.getFavoriteDestinations()))
-                    {
-                        String notification = "Flight: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " is on sale! the new price is: " + newPrice + "$";
-                        traveler.notify(notification);
-                    }
-                }
-            }
+            ArrayList<Observer> RelevantObservers = flight.flightRelevantObservers(observers);
+            String notification = "Flight: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " is on sale! the new price is: " + newPrice + "$";
+            notifyRelevantObservers(RelevantObservers,notification);
         }
         flight.setPrice(newPrice);
     }
     public void flightSetDepartureTime(Flight flight, String newDepartureTime)
     {
         flight.setDepartureTime(newDepartureTime);
-        for (Observer observer : observers) {
-            if (observer instanceof Traveler)
-            {
-                Traveler traveler = (Traveler) observer;
-                if (traveler.getCountry().equals(flight.getFrom()) && flightInDestinations(flight.getDestination(), traveler.getFavoriteDestinations())) {
-                    String notification = "The new departure of: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " at: " + newDepartureTime;
-                    traveler.notify(notification);
-                }
-            }
-        }
+        ArrayList<Observer> RelevantObservers = flight.flightRelevantObservers(observers);
+        String notification = "The new departure of: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " at: " + newDepartureTime;
+        notifyRelevantObservers(RelevantObservers,notification);
     }
     public void flightSetDate(Flight flight, String newDate)
     {
         flight.setDate(newDate);
-        for (Observer observer : observers) {
-            if (observer instanceof Traveler)
-            {
-                Traveler traveler = (Traveler) observer;
-                if (traveler.getCountry().equals(flight.getFrom()) && flightInDestinations(flight.getDestination(), traveler.getFavoriteDestinations())) {
-                    String notification = "The new date of: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " at: " + newDate;
-                    traveler.notify(notification);
-                }
-            }
-        }
+        ArrayList<Observer> RelevantObservers = flight.flightRelevantObservers(observers);
+        String notification = "The new date of: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " at: " + newDate;
+        notifyRelevantObservers(RelevantObservers,notification);
     }
     public void setFlightPriceForWorkers(Airline airline, Flight flight, double newPrice)
     {
         if(newPrice < flight.getPriceForWorkers())
         {
-            for (Observer observer : observers)
-            {
-                if (observer instanceof Worker)
-                {
-                    Worker worker = (Worker) observer;
-                    if (worker.getAirline().equals(airline) && airline.getSubsidiaries().contains(flight))
-                    {
-                        if (worker.getCountry().equals(flight.getFrom()) && flightInDestinations(flight.getDestination(), worker.getFavoriteDestinations()))
-                        {
-                            String notification = "Flight: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " is on sale for workers! the price for you is: " + newPrice + "$";
-                            worker.notify(notification);
-                        }
-                    }
-                }
-            }
+            ArrayList<Observer> RelevantObservers = flight.WorkersflightRelevantObservers(airline, observers);
+            String notification = "Flight: " + flight.getName() + " from: " + flight.getFrom() + " to: " + flight.getDestination() + " is on sale for workers! the price for you is: " + newPrice + "$";
+            notifyRelevantObservers(RelevantObservers,notification);
         }
         flight.setPriceForWorkers(newPrice);
-    }
-    public boolean flightInDestinations(String destination, String[] destinations)
-    {
-        for(String dest: destinations)
-        {
-            if(dest.equals(destination))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }

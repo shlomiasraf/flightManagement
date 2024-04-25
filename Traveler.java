@@ -30,9 +30,13 @@ abstract class Traveler extends Observer
     {
         return this.favoriteDestinations;
     }
-    public void notify(String msg)
+    public void printNotifications()
     {
-        this.update(msg);
+        System.out.println("\n" + this.name + " notifications:");
+        for(String notification : this.notifications)
+        {
+            System.out.println(notification);
+        }
     }
 }
 

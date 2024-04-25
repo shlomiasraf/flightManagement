@@ -87,6 +87,52 @@ class Flight implements Airlines
     {
         this.priceForWorkers = newPriceForWorkers;
     }
+    public ArrayList<Observer> flightRelevantObservers(ArrayList<Observer> allObservers)
+    {
+        ArrayList<Observer> RelevantObservers = new ArrayList<>();
+        for (Observer observer : allObservers)
+        {
+            if (observer instanceof Traveler)
+            {
+                Traveler traveler = (Traveler) observer;
+                if (traveler.getCountry().equals(this.from) && flightInDestinations(this.destination,traveler.getFavoriteDestinations()))
+                {
+                    RelevantObservers.add(observer);
+                }
+            }
+        }
+        return RelevantObservers;
+    }
+    public ArrayList<Observer> WorkersflightRelevantObservers(Airline airline, ArrayList<Observer> allObservers)
+    {
+        ArrayList<Observer> RelevantObservers = new ArrayList<>();
+        for (Observer observer : allObservers)
+        {
+            if (observer instanceof Worker)
+            {
+                Worker worker = (Worker) observer;
+                if (worker.getAirline().equals(airline) && airline.getSubsidiaries().contains(this))
+                {
+                    if (worker.getCountry().equals(this.from) && flightInDestinations(this.destination, worker.getFavoriteDestinations()))
+                    {
+                        RelevantObservers.add(observer);
+                    }
+                }
+            }
+        }
+        return RelevantObservers;
+    }
+    public boolean flightInDestinations(String destination, String[] destinations)
+    {
+        for(String dest: destinations)
+        {
+            if(dest.equals(destination))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 class FlightFactory
 {
@@ -116,6 +162,12 @@ class Airline implements Airlines
         this.airlineName = airlineName;
         this.subsidiaries = new ArrayList<>();
     }
+
+    @Override
+    public String getName()
+    {
+        return airlineName;
+    }
     public List<Airlines> getSubsidiaries()
     {
         return this.subsidiaries;
@@ -128,18 +180,14 @@ class Airline implements Airlines
             subsidiaries.add(subsidiary);
         }
     }
-    public void remove(Airlines subsidiary)
+    public boolean remove(Airlines subsidiary)
     {
-        if(!subsidiaries.contains(subsidiary))
+        if(subsidiaries.contains(subsidiary))
         {
             subsidiaries.remove(subsidiary);
+            return true;
         }
-    }
-
-    @Override
-    public String getName()
-    {
-        return airlineName;
+        return false;
     }
 }
 class AirlineFactory

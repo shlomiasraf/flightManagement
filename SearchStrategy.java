@@ -39,7 +39,7 @@ class searchByDate implements SearchStrategy
 			@Override
 			public int compare(Flight flight1, Flight flight2)
 			{
-				// Compare prices of flights
+				// Compare dates of flights
 				int month1 = Integer.parseInt(flight1.getDate().split("/")[1]);
 				int month2 = Integer.parseInt(flight2.getDate().split("/")[1]);
 				if(month1 == month2)
@@ -68,7 +68,7 @@ class searchByTimeOfDeparture implements SearchStrategy
 			@Override
 			public int compare(Flight flight1,Flight flight2)
 			{
-				// Compare prices of flights
+				// Compare Departure of flights
 				int hour1 = Integer.parseInt(flight1.getDepartureTime().split(":")[0]);
 				int hour2 = Integer.parseInt(flight2.getDepartureTime().split(":")[0]);
 				if(hour1 == hour2)
@@ -129,7 +129,7 @@ class searchByFlightDuration implements SearchStrategy
 					}
 					return Integer.compare(durationMinutes1, durationMinutes2);
 				}
-				// Compare prices of flights
+				// Compare duration of flights
 				return Integer.compare(durationHours1, durationHours2);
 			}
 		});

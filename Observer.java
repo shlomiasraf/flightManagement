@@ -42,4 +42,11 @@ abstract class Subject
             observer.update(message);
         }
     }
+    public void notifyRelevantObservers(ArrayList<Observer> RelevantObservers, String message)
+    {
+        for(Observer observer : RelevantObservers)
+        {
+            observer.update(message);
+        }
+    }
 }
